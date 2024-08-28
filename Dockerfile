@@ -26,6 +26,7 @@ RUN apt-get update && apt-get install -y \
     libgtk-3-0 \
     lsb-release \
     xdg-utils \
+    vim \
     cron \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
@@ -42,10 +43,11 @@ COPY . .
 # Copie o script de inicialização
 COPY start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
+RUN chmod +x /script.sh
 
 # Configure o cron job
 COPY crontab /etc/cron.d/cron-job
-RUN chmod 0644 /etc/cron.d/cron-job
+RUN chmod 0777 /etc/cron.d/cron-job
 RUN crontab /etc/cron.d/cron-job
 
 # Exponha a porta que sua aplicação usará (se necessário)
