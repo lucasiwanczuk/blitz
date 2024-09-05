@@ -3,9 +3,42 @@ import fs from 'fs';
 import fetch from 'node-fetch';
 import path from 'path';
 import csvParser from 'csv-parser';
-import { usuario, senha, hostdb, userdb, passdb, downloadPath, fileName } from './auth.js'
+import dotenv from 'dotenv';
 import pkg from 'pg';
+import winston from 'winston';
+dotenv.config();
+// USUARIO_INTRA="03244525008"
+// SENHA_INTRA="VK6-GA&)duW9YMK6"
+// HOST_DB="177.126.159.93"
+// USER_DB="postgres"
+// PASSWORD_DB="123@mudar"
+const usuario = "03244525008";
+const senha = "VK6-GA&)duW9YMK6";
+const hostdb = "177.126.159.93";
+const userdb = "postgres";
+const passdb = "123@mudar";
+
 const { Client } = pkg;
+
+const downloadPath = "./";
+const fileName = "export_file.csv";
+
+const logger = winston.createLogger({
+    level: 'info',
+    format: winston.format.combine(
+      winston.format.timestamp({
+        format: 'YYYY-MM-DD HH:mm:ss'
+      }),
+      winston.format.printf(({ timestamp, level, message }) => {
+        return `${timestamp} [${level.toUpperCase()}]: ${message}`;
+      })
+    ),
+    transports: [
+      new winston.transports.Console(),
+      // Você pode adicionar mais transportes como arquivo, etc.
+    ],
+  });
+
 const client = new Client({
     user: userdb,
     host: hostdb,
@@ -37,6 +70,8 @@ const columnMapping = {
     'Primeira atribuição em': 'first_assignment_at',
     'Cancelado Em': 'canceled_at'
 };
+async function main(){
+
 
 // Inicia o Script
 console.log('Iniciando o navegador...');
@@ -198,3 +233,15 @@ fs.unlink(filePath, (err) => {
       console.log('Arquivo deletado com sucesso.');
     }
   });
+
+// Use o logger para mostrar a data e hora junto com a mensagem
+logger.info('Script executado');
+
+}
+
+import { scheduleJob } from "node-schedule";
+
+const job = scheduleJob('7 7-19 * * *', function(){
+
+  main()                              
+});

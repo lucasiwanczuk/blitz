@@ -1,8 +1,8 @@
 # Use uma imagem base do Node.js
-FROM node:20
+FROM node:current-bullseye
 
 # Crie e defina o diretório de trabalho no container
-WORKDIR /
+WORKDIR /usr/src/app
 
 # Instale as dependências do sistema necessárias para o Puppeteer e o cron
 RUN apt-get update && apt-get install -y \
@@ -38,20 +38,17 @@ COPY package*.json ./
 RUN npm install
 
 # Copie todos os outros arquivos do projeto para o diretório de trabalho
-COPY . .
+COPY . /usr/src/app
 
 # Copie o script de inicialização
-COPY start.sh /usr/local/bin/start.sh
-RUN chmod +x /usr/local/bin/start.sh
-RUN chmod +x /script.sh
+RUN chmod +x /usr/src/app/start.sh
+RUN chmod +x /usr/src/app/index.js
 
-# Configure o cron job
-COPY crontab /etc/cron.d/cron-job
-RUN chmod 0777 /etc/cron.d/cron-job
-RUN crontab /etc/cron.d/cron-job
+# Dê permissão ao start.sh
+RUN chmod +x /usr/src/app/start.sh
 
 # Exponha a porta que sua aplicação usará (se necessário)
 EXPOSE 3001
 
-# Comando para iniciar o script de inicialização
-CMD ["/usr/local/bin/start.sh"]
+# Comando para iniciar o cron e a aplicação
+CMD ["/bin/bash", "/usr/src/app/start.sh"]

@@ -1,7 +1,3 @@
 #!/bin/bash
-
-# Inicie o cron em background
-service cron start
-
-# Mantenha o container em execução
+npm start &
 tail -f /dev/null
