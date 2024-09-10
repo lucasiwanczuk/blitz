@@ -46,31 +46,32 @@ const logger = winston.createLogger({
 //   port: 8877, // ou a porta que você estiver usando
 // });
 
-const columnMapping = {
-  'Código': 'cod_protocol',
-  'Assunto': 'subject',
-  'Contato': 'contact',
-  'Email do Contato': 'contact_email',
-  'Unidade': 'unit',
-  'Departamento': 'department',
-  'Cargo': 'position',
-  'Tipo': 'type',
-  'Situação': 'status',
-  'Atendente': 'attendant',
-  'Grupo': 'group',
-  'Prioridade': 'priority',
-  'Criado Em': 'created_at',
-  'Prazo da primeira resposta': 'first_response_deadline',
-  'Primeira resposta': 'first_response',
-  'Prazo de resolução': 'resolution_deadline',
-  'Concluído Em': 'completed_at',
-  'Ultima alteração': 'last_modified',
-  'SLA': 'sla',
-  'Primeira atribuição em': 'first_assignment_at',
-  'Cancelado Em': 'canceled_at'
-};
 
 async function main() {
+
+  const columnMapping = {
+    'Código': 'cod_protocol',
+    'Assunto': 'subject',
+    'Contato': 'contact',
+    'Email do Contato': 'contact_email',
+    'Unidade': 'unit',
+    'Departamento': 'department',
+    'Cargo': 'position',
+    'Tipo': 'type',
+    'Situação': 'status',
+    'Atendente': 'attendant',
+    'Grupo': 'group',
+    'Prioridade': 'priority',
+    'Criado Em': 'created_at',
+    'Prazo da primeira resposta': 'first_response_deadline',
+    'Primeira resposta': 'first_response',
+    'Prazo de resolução': 'resolution_deadline',
+    'Concluído Em': 'completed_at',
+    'Ultima alteração': 'last_modified',
+    'SLA': 'sla',
+    'Primeira atribuição em': 'first_assignment_at',
+    'Cancelado Em': 'canceled_at'
+  };
 
   const client = new Client({
     user: userdb,
@@ -245,6 +246,6 @@ async function main() {
 
 }
 
-const job = scheduleJob('16,18,20,22,35,36,37 7-19 * * *', function () {
+const job = scheduleJob('0,10,20,30,40,50,55 7-19 * * *', function () {
   main()
 });
