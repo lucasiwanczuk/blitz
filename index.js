@@ -225,7 +225,7 @@ async function main() {
     });
   }
   
-
+  await sleep(10000);  // Pausa de 10 segundos
   // Execute o processamento
   try {
     await processCSV();
