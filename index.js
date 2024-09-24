@@ -167,52 +167,56 @@ async function main() {
   // Caminho para o arquivo CSV
   const filePath = path.join(downloadPath, fileName);
 
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
   // Função para processar o CSV e inserir dados no banco
   async function processCSV() {
     return new Promise((resolve, reject) => {
       const results = [];
-
+  
       fs.createReadStream(filePath)
         .pipe(csvParser({ separator: ';' }))  // Especifica o delimitador como ponto e vírgula
         .on('data', (data) => {
-          // console.log('Dados lidos:', data); // Log dos dados lidos
           results.push(data);
         })
         .on('end', async () => {
           try {
-            for (const row of results) {
-              console.log(row)
-
-              const values = Object.values(row)
-              // Execute the insertion
-              console.log('Valores a serem inseridos:', values);  // Verifique se o email está correto aqui
-              await client.query(`
-                        INSERT INTO int_chamados_ti ("cod_protocol", "subject", "contact", "contact_email", "unit", "department", "position", "type", "status", "attendant", "group", "priority", "created_at", "first_response_deadline", "first_response", "resolution_deadline", "completed_at", "last_modified", "sla", "first_assignment_at", "canceled_at")
-                        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)
-                        ON CONFLICT ("cod_protocol")
-                        DO UPDATE SET
-                            "subject" = EXCLUDED."subject",
-                            "contact" = EXCLUDED."contact",
-                            "contact_email" = EXCLUDED."contact_email",
-                            "unit" = EXCLUDED."unit",
-                            "department" = EXCLUDED."department",
-                            "position" = EXCLUDED."position",
-                            "type" = EXCLUDED."type",
-                            "status" = EXCLUDED."status",
-                            "attendant" = EXCLUDED."attendant",
-                            "group" = EXCLUDED."group",
-                            "priority" = EXCLUDED."priority",
-                            "created_at" = EXCLUDED."created_at",
-                            "first_response_deadline" = EXCLUDED."first_response_deadline",
-                            "first_response" = EXCLUDED."first_response",
-                            "resolution_deadline" = EXCLUDED."resolution_deadline",
-                            "completed_at" = EXCLUDED."completed_at",
-                            "last_modified" = EXCLUDED."last_modified",
-                            "sla" = EXCLUDED."sla",
-                            "first_assignment_at" = EXCLUDED."first_assignment_at",
-                            "canceled_at" = EXCLUDED."canceled_at";
-                    `, values);
-            }
+            const queryText = `
+              INSERT INTO int_chamados_ti ("cod_protocol", "subject", "contact", "contact_email", "unit", "department", "position", "type", "status", "attendant", "group", "priority", "created_at", "first_response_deadline", "first_response", "resolution_deadline", "completed_at", "last_modified", "sla", "first_assignment_at", "canceled_at")
+              VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)
+              ON CONFLICT ("cod_protocol")
+              DO UPDATE SET
+                "subject" = EXCLUDED."subject",
+                "contact" = EXCLUDED."contact",
+                "contact_email" = EXCLUDED."contact_email",
+                "unit" = EXCLUDED."unit",
+                "department" = EXCLUDED."department",
+                "position" = EXCLUDED."position",
+                "type" = EXCLUDED."type",
+                "status" = EXCLUDED."status",
+                "attendant" = EXCLUDED."attendant",
+                "group" = EXCLUDED."group",
+                "priority" = EXCLUDED."priority",
+                "created_at" = EXCLUDED."created_at",
+                "first_response_deadline" = EXCLUDED."first_response_deadline",
+                "first_response" = EXCLUDED."first_response",
+                "resolution_deadline" = EXCLUDED."resolution_deadline",
+                "completed_at" = EXCLUDED."completed_at",
+                "last_modified" = EXCLUDED."last_modified",
+                "sla" = EXCLUDED."sla",
+                "first_assignment_at" = EXCLUDED."first_assignment_at",
+                "canceled_at" = EXCLUDED."canceled_at";
+            `;
+  
+            // Executa a inserção em lote
+            const promises = results.map(row => {
+              const values = Object.values(row);
+              return client.query(queryText, values);
+            });
+  
+            await Promise.all(promises);
             resolve();
           } catch (err) {
             reject(err);
@@ -220,6 +224,7 @@ async function main() {
         });
     });
   }
+  
 
   // Execute o processamento
   try {
@@ -246,6 +251,6 @@ async function main() {
 
 }
 
-const job = scheduleJob('0,10,20,30,40,50,55 7-19 * * *', function () {
+const job = scheduleJob('0,15,30,45 7-19 * * *', function () {
   main()
 });
