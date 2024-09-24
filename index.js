@@ -251,6 +251,6 @@ async function main() {
 
 }
 
-const job = scheduleJob('0,15,30,45 7-19 * * *', function () {
+const job = scheduleJob('0,10,15,30,40,45 7-19 * * *', function () {
   main()
 });
