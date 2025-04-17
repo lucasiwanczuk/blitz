@@ -8,16 +8,12 @@ import pkg from 'pg';
 import winston from 'winston';
 import { scheduleJob } from "node-schedule";
 dotenv.config();
-// USUARIO_INTRA="03244525008"
-// SENHA_INTRA="VK6-GA&)duW9YMK6"
-// HOST_DB="177.126.159.93"
-// USER_DB="postgres"
-// PASSWORD_DB="123@mudar"
-const usuario = "03244525008";
-const senha = "VK6-GA&)duW9YMK6";
-const hostdb = "177.126.159.93";
+
+const usuario = "USERCONFIDENCIAL";
+const senha = "PASSCONFIDENCIAL";
+const hostdb = "127.0.0.1";
 const userdb = "postgres";
-const passdb = "123@mudar";
+const passdb = "password";
 const { Client } = pkg;
 const downloadPath = "./";
 const fileName = "export_file.csv";
